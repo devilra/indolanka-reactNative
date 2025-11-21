@@ -1,11 +1,11 @@
 import { useFonts } from "expo-font";
-import * as NavigationBar from "expo-navigation-bar";
-import { Slot } from "expo-router";
-import { StatusBar } from "expo-status-bar";
-import { useEffect } from "react";
-import { SafeAreaView } from "react-native-safe-area-context";
+import { Stack } from "expo-router";
+import * as SplashScreen from "expo-splash-screen";
+import { useEffect, useState } from "react";
+
 import "../global.css";
 
+SplashScreen.preventAutoHideAsync();
 export default function RootLayout() {
   const [fontsLoaded] = useFonts({
     // ✨ All your fonts here
@@ -13,21 +13,69 @@ export default function RootLayout() {
     Monoton: require("../assets/fonts/Monoton-Regular.ttf"),
     RubikDoodleShadow: require("../assets/fonts/RubikDoodleShadow-Regular.ttf"),
     Audiowide: require("../assets/fonts/Audiowide-Regular.ttf"),
+    NewRocker: require("../assets/fonts/NewRocker-Regular.ttf"),
   });
 
+  const [isReady, setIsReady] = useState(false);
+
   useEffect(() => {
-    // 📌 Android bottom navigation bar customization
-    NavigationBar.setBackgroundColorAsync("#e60068");
-    NavigationBar.setButtonStyleAsync("dark");
+    async function prepare() {
+      try {
+      } catch (error) {
+        console.warn("Error loading assets: ", error);
+      } finally {
+        setIsReady(true);
+        await SplashScreen.hideAsync();
+      }
+    }
+    prepare();
   }, []);
 
-  return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: "#e41f53" }}>
-      {/* 🌟 Top StatusBar color + text color */}
-      <StatusBar style="light" backgroundColor="#e41f53" />
+  if (!isReady || !fontsLoaded) {
+    return null;
+  }
 
-      {/* Render screens */}
-      <Slot />
-    </SafeAreaView>
+  return (
+    <Stack
+      screenOptions={{
+        headerShown: false,
+        animation: "slide_from_right",
+        gestureEnabled: true,
+        gestureDirection: "horizontal",
+        statusBarStyle: "dark",
+        presentation: "card",
+        animationDuration: 450,
+        navigationBarColor: "black",
+        navigationBarHidden: false,
+        //animationTypeForReplace: "push",
+        //orientation: "portrait",
+        // Edge swipe area
+        // gestureResponseDistance: {
+        //   horizontal: 50, // swipe length to trigger back
+        // },
+        // contentStyle: {
+        //   backgroundColor: "#e41f53",
+        // },
+      }}
+    >
+      <Stack.Screen
+        name="launch"
+        options={{
+          title: "Launch",
+        }}
+      />
+      <Stack.Screen
+        name="index"
+        options={{
+          title: "Index",
+        }}
+      />
+      <Stack.Screen
+        name="welcome"
+        options={{
+          title: "Welcome",
+        }}
+      />
+    </Stack>
   );
 }

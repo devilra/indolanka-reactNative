@@ -1,7 +1,7 @@
 import { LinearGradient } from "expo-linear-gradient";
 import { useRouter } from "expo-router";
 import { MotiText, MotiView } from "moti";
-import React, { useEffect } from "react";
+import { useEffect } from "react";
 import { Image, View } from "react-native";
 import logo from "../../assets/logo/logo.webp";
 
